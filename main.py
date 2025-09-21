@@ -25,9 +25,9 @@ if os.path.exists(cached_path):
 else:
     cached = set()
 
-def save_cached():
+def save_cached(cached):
     with open("cached.json", "w") as f:
-        json.dump(list(reposted), f)
+        json.dump(list(cached), f)
 
 @bot.event
 async def on_ready():
@@ -51,6 +51,6 @@ async def on_raw_reaction_add(payload):
     await dest_channel.send(f"<@&{role_mention_id}>\n{message.content}")
 
     cached.add(payload.message.id)
-    save_cached()
+    save_cached(cached)
 
 bot.run(token)
