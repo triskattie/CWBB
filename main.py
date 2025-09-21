@@ -1,0 +1,54 @@
+import discord
+from discord.ext import commands
+import json
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+token = os.environ['BOT_TOKEN']
+
+source_channel_id = 0
+dest_channel_id = 0
+
+intents = discord.Intents.default()
+intents.reactions = True
+intents.messages = True
+bot = commands.Bot(command_prefix=None, intents=intents)
+
+# Load previous message IDs
+if os.path.exists("cached.json"):
+    with open("cached.json", "r") as f:
+        cached = set(json.load(f))
+else:
+    cached = set()
+
+def save_cached():
+    with open("cached.json", "w") as f:
+        json.dump(list(reposted), f)
+
+@bot.event
+async def on_ready():
+    print("Bot is ready.")
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    if payload.channel.id != source_channel_id:
+        return
+
+    if str(payload.emoji) != "✅":
+        return
+
+    if payload.message.id in cached:
+        return
+
+    channel = bot.get_channel(payload.channel_id)
+    message = await channel.fetch_message(payload.message_id)
+
+    dest_channel = bot.get_channel(dest_channel_id)
+    await dest_channel.send(message.content)
+
+    cached.add(payload.message.id)
+    save_cached()
+
+bot.run(token)
