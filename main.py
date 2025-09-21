@@ -8,13 +8,14 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.environ['BOT_TOKEN']
 
-source_channel_id = 0
-dest_channel_id = 0
+source_channel_id = 1419435979374334035
+dest_channel_id = 1419435776869007361
+role_mention_id = 1414130283099193444
 
 intents = discord.Intents.default()
 intents.reactions = True
 intents.messages = True
-bot = commands.Bot(command_prefix=None, intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 # Load previous message IDs
 if os.path.exists("cached.json"):
@@ -33,20 +34,20 @@ async def on_ready():
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    if payload.channel.id != source_channel_id:
+    if payload.channel_id != source_channel_id:
         return
 
     if str(payload.emoji) != "✅":
         return
 
-    if payload.message.id in cached:
+    if payload.message_id in cached:
         return
 
     channel = bot.get_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
 
     dest_channel = bot.get_channel(dest_channel_id)
-    await dest_channel.send(message.content)
+    await dest_channel.send(f"<@&{role_mention_id}>\n{message.content}")
 
     cached.add(payload.message.id)
     save_cached()
