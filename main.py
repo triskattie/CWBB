@@ -18,7 +18,7 @@ intents.messages = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 # Load previous message IDs
-cached_path = os.path.join(os.path.dirname(__file__), os.pardir, "cached.json")
+cached_path = os.path.join(os.path.dirname(__file__), "cached.json")
 if os.path.exists(cached_path):
     with open(cached_path, "r") as f:
         cached = set(json.load(f))
