@@ -50,7 +50,7 @@ async def on_raw_reaction_add(payload):
     dest_channel = bot.get_channel(dest_channel_id)
     await dest_channel.send(f"<@&{role_mention_id}>\n{message.content}")
 
-    cached.add(payload.message.id)
+    cached.add(payload.message_id)
     save_cached(cached)
 
 bot.run(token)
